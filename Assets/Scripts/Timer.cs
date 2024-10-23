@@ -7,16 +7,20 @@ using TMPro;
 
 public class Timer : MonoBehaviour
 {
-    public float timeRemaining = 0;
+    public float timeRemaining = 60;
     public bool timeIsRunning = true;
     public TMP_Text timetext;
-     
+
+    public GameObject loseScreen;
+    public bool GameLost;
+
 
 
     // Start is called before the first frame update
     void Start()
     {
         timeIsRunning = true;
+       
 
     }
 
@@ -25,13 +29,26 @@ public class Timer : MonoBehaviour
     {
         if (timeIsRunning)
         {
-            if (timeRemaining >= 0)
+            if (timeRemaining <= 60)
             {
-                timeRemaining += Time.deltaTime;
+                timeRemaining -= Time.deltaTime;
                 DisplayTime(timeRemaining);
             }
         }
        
+        if(timeRemaining == 0)
+        {
+
+            GameLost = true;
+
+
+        }
+        else
+        {
+
+
+            GameLost = false;
+        }
    
     }
 void DisplayTime (float timeToDisplay)
@@ -39,7 +56,24 @@ void DisplayTime (float timeToDisplay)
         timeToDisplay += 1;
         float minutes = Mathf.FloorToInt (timeToDisplay / 60);  
         float seconds = Mathf.FloorToInt (timeToDisplay % 60);
-        timetext.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+        timetext.text = string.Format("{1:00}", minutes, seconds);
     }
+
+
+    public void GamerOver()
+    {
+
+        if(timeRemaining == 0f)
+        {
+
+
+
+        }
+
+    }
+
+
+
+
 
 }

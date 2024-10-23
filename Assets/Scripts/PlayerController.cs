@@ -6,19 +6,20 @@ using Input = UnityEngine.Input;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using UnityEngine.SceneManagement;
 
 
 public class PlayerController : MonoBehaviour
 {
 
-    public static PlayerController instance; 
+    public static PlayerController instance;
 
     public Rigidbody2D TheRB;
 
-    private Vector2 moveInput;
-    private Vector2 mouseInput;
+    public Vector2 moveInput;
+    public Vector2 mouseInput;
 
-    public float mouseSensitivity = 3f;
+    public float mouseSensitivity = 1f;
 
 
     public float moveSpeed = 5f;
@@ -26,18 +27,17 @@ public class PlayerController : MonoBehaviour
     public Camera viewCam;
 
     public GameObject BulletImpact;
-
     public int currentPlanks;
 
-    public Animator gunAnim;
+    public Animator handAnim;
     public Animator anim;
 
-    public Animator pickupAnim;
+    public bool enough;
 
 
     public TextMeshProUGUI planks;
-  
-                
+
+    public GameObject winscreen;
 
 
     private void Awake()
@@ -47,75 +47,86 @@ public class PlayerController : MonoBehaviour
 
     // Start is called before the first frame update
     void Start()
-    {   
+    {
         planks.text = currentPlanks.ToString();
-        
+        winscreen.SetActive(false);
+
     }
+
+
 
     // Update is called once per frame
     void Update()
     {
-        //player movement
-        moveInput = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-
-
-        Vector3 moveHorizontal = transform.up * -moveInput.x;
-
-        Vector3 moveVertical = transform.right * moveInput.y;
-
-        TheRB.velocity = (moveHorizontal + moveVertical) * moveSpeed;
-
-
-
-        //player view control
-        mouseInput = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y")) * mouseSensitivity;
-
-        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z - mouseInput.x);
-
-
-        viewCam.transform.localRotation = Quaternion.Euler(viewCam.transform.localRotation.eulerAngles + new Vector3(0f, mouseInput.y, 0f));
-
-
-        //Shooting
-
-        if (Input.GetButton("e"))
+        if (!PauseMenu.isPaused)
         {
-            if (currentPlanks > 0)
+
+            //player movement
+            moveInput = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+
+
+            Vector3 moveHorizontal = transform.up * -moveInput.x;
+
+            Vector3 moveVertical = transform.right * moveInput.y;
+
+            TheRB.velocity = (moveHorizontal + moveVertical) * moveSpeed;
+
+
+
+            //player view control
+            mouseInput = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y")) * mouseSensitivity;
+
+            transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z - mouseInput.x);
+
+
+            viewCam.transform.localRotation = Quaternion.Euler(viewCam.transform.localRotation.eulerAngles + new Vector3(0f, mouseInput.y, 0f));
+
+
+
+            if (moveInput != Vector2.zero)
             {
-                Ray ray = viewCam.ViewportPointToRay(new Vector3(.5f, .5f, .5f));
 
-                RaycastHit hit;
-
-
+                anim.SetBool("IsMoving", true);
                 
             }
+            else
+            {
+
+                anim.SetBool("IsMoving", false);
+                AudioController.instance.PlayFootstepWalking();
+            }
+
+
+            
+        
+            
+
+
 
         }
 
+        
+     }
 
-        if (moveInput != Vector2.zero)
-        {
-            anim.SetBool("IsMoving", true);
-        }else
-        {
-            anim.SetBool("IsMoving", false);
-        }
 
-       
-    
-    
-    }
+
+
+
+
+
+
 
 
     public class PlayMyAnimation : MonoBehaviour
     {
-        [SerializeField] private Animator MyAnimationController;
-
-        private void OnTriggerEnter2D(Collider other)
+        [SerializeField] public Animator MyAnimationController;
+        // Door Function
+        public void OnTriggerEnter2D(UnityEngine.Collider other)
         {
-            if (other.CompareTag("Player")){
-                
-              
+            if (other.CompareTag("Player"))
+            {
+
+
 
             }
 
@@ -124,11 +135,51 @@ public class PlayerController : MonoBehaviour
 
 
     }
-    public void UpdatePlanksUI()
+
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "FinalDoor")
+        {
+
+            if (currentPlanks == 5f)
+            {
+
+
+                winscreen.SetActive(true);
+ 
+
+            }
+
+
+
+
+
+
+
+
+        }
+   
+    
+    
+    
+    
+    
+    }
+
+
+
+
+     public void UpdatePlanksUI()
     {
         planks.text = currentPlanks.ToString();
 
     }
+
+
+
+
 }
+
 
 

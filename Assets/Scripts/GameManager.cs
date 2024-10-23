@@ -13,12 +13,13 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //simple code to check if cursor is pressed enabling cursor lock
         if (Input.GetKeyDown(KeyCode.Escape))
         {
 
             UnlockCursor();
         }
-
+        //If escape key pressed unlocks cursors and makes visible
         if (Input.GetMouseButton(0))
         {
 
@@ -27,13 +28,14 @@ public class GameManager : MonoBehaviour
 
     }
 
+    //Cursor Lock so Cursor isnt on screen while playing
     private void LockCursor()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false; 
 
     }
-
+    //Cursor unlock so cursor is visible while in menu
     private void UnlockCursor()
     { 
     

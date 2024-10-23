@@ -52,7 +52,7 @@ public class Door : MonoBehaviour
         if(other.tag == "Player")
         {
             shouldOpen = true;
-
+            AudioController.instance.PlayDoorOpen();
         }
 
     }
